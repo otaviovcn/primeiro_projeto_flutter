@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nosso_primeiro_projeto/Difficulty.dart';
 
 void main() {
   runApp(MyApp());
@@ -44,7 +45,7 @@ class _MyAppState extends State<MyApp> {
           child: ListView(
             children: [
               Task('Primeiro teste', Colors.white, picture1, 3),
-              Task('Segundo teste', Colors.white, picture2, 4),
+              Task('Segundo teste', Colors.white, picture2, 2),
               Task('Terceiro  teste', Colors.deepPurple, picture3, 1),
             ],
           ),
@@ -55,7 +56,10 @@ class _MyAppState extends State<MyApp> {
               isVisible = !isVisible;
             });
           },
-          child: isVisible ? Icon(Icons.remove_red_eye_sharp) : Icon(Icons.remove_red_eye_outlined),
+          child:
+              isVisible
+                  ? Icon(Icons.remove_red_eye_sharp)
+                  : Icon(Icons.remove_red_eye_outlined),
         ),
         // floatingActionButton: FloatingButton(),
       ),
@@ -67,9 +71,9 @@ class Task extends StatefulWidget {
   final String name;
   final Color color;
   final String picture;
-  final int difficulte;
+  final int difficulty;
 
-  const Task(this.name, this.color, this.picture, this.difficulte, {super.key});
+  const Task(this.name, this.color, this.picture, this.difficulty, {super.key});
 
   @override
   State<Task> createState() => _TaskState();
@@ -100,9 +104,9 @@ class _TaskState extends State<Task> {
                   width: 200,
                   child: LinearProgressIndicator(
                     value:
-                    widget.difficulte == 0
-                        ? 1
-                        : level / widget.difficulte / 10,
+                        widget.difficulty == 0
+                            ? 1
+                            : level / widget.difficulty / 10,
                   ),
                 ),
                 Text(
@@ -156,50 +160,8 @@ class _TaskState extends State<Task> {
                         style: TextStyle(fontSize: 24),
                         overflow: TextOverflow.ellipsis,
                       ),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.star,
-                            size: 15,
-                            color:
-                            widget.difficulte >= 1
-                                ? Colors.blue
-                                : Colors.blue[100],
-                          ),
-                          Icon(
-                            Icons.star,
-                            size: 15,
-                            color:
-                            widget.difficulte >= 2
-                                ? Colors.blue
-                                : Colors.blue[100],
-                          ),
-                          Icon(
-                            Icons.star,
-                            size: 15,
-                            color:
-                            widget.difficulte >= 3
-                                ? Colors.blue
-                                : Colors.blue[100],
-                          ),
-                          Icon(
-                            Icons.star,
-                            size: 15,
-                            color:
-                            widget.difficulte >= 4
-                                ? Colors.blue
-                                : Colors.blue[100],
-                          ),
-                          Icon(
-                            Icons.star,
-                            size: 15,
-                            color:
-                            widget.difficulte >= 5
-                                ? Colors.blue
-                                : Colors.blue[100],
-                          ),
-                        ],
-                      ),
+
+                      Difficulty(difficultyLevel: widget.difficulty),
                     ],
                   ),
                 ),
@@ -251,52 +213,3 @@ class _TaskState extends State<Task> {
     );
   }
 }
-
-// class MyHomePage extends StatefulWidget {
-//   const MyHomePage({super.key, required this.title});
-//
-//   final String title;
-//
-//   @override
-//   State<MyHomePage> createState() => _MyHomePageState();
-// }
-//
-// class _MyHomePageState extends State<MyHomePage> {
-//   int _counter = 0;
-//
-//   void _incrementCounter() {
-//     setState(() {
-//       _counter++;
-//     });
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         backgroundColor: Colors.deepPurple,
-//         title: Text(widget.title),
-//       ),
-//       body: ListView(
-//         children: [
-//           Column(
-//             mainAxisAlignment: MainAxisAlignment.center,
-//             crossAxisAlignment:  CrossAxisAlignment.center,
-//             children: <Widget>[
-//               const Text('You have pushed the button this many times:'),
-//               Text(
-//                 '$_counter',
-//                 style: Theme.of(context).textTheme.headlineMedium,
-//               ),
-//             ],
-//           ),
-//         ],
-//       ),
-//       floatingActionButton: FloatingActionButton(
-//         onPressed: _incrementCounter,
-//         tooltip: 'Increment',
-//         child: const Icon(Icons.add),
-//       ),
-//     );
-//   }
-// }
