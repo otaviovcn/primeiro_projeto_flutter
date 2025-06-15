@@ -14,9 +14,30 @@ class Task extends StatefulWidget {
   State<Task> createState() => _TaskState();
 }
 
-
 class _TaskState extends State<Task> {
-int level = 0;
+  int level = 0;
+  double progressIndicator = 0.0;
+  Color color = Colors.lightBlue;
+
+  void upgradeLevel() {
+    double evolution =
+        widget.difficulty == 0 ? 1 : level / widget.difficulty / 10;
+
+    if ( evolution <= 1.0) {
+      color = Colors.lightBlue;
+      progressIndicator = evolution;
+    } else if (evolution <= 2.0) {
+      color = Colors.green;
+      progressIndicator = evolution - 1;
+    } else if (evolution <= 3.0) {
+      color = Colors.orange;
+      progressIndicator = evolution - 2;
+    } else {
+      color = Colors.red; // cor final, você pode trocar
+      progressIndicator = 1;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -25,7 +46,7 @@ int level = 0;
         children: [
           Container(
             decoration: BoxDecoration(
-              color: Colors.lightBlue,
+              color: color,
               borderRadius: BorderRadius.circular(4),
             ),
             height: 140,
@@ -35,17 +56,12 @@ int level = 0;
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Container(
+                SizedBox(
                   width: 200,
-                  child: LinearProgressIndicator(
-                    value:
-                    widget.difficulty == 0
-                        ? 1
-                        : level / widget.difficulty / 10,
-                  ),
+                  child: LinearProgressIndicator(value: progressIndicator),
                 ),
                 Text(
-                  "Nível $level",
+                  "Nível ${level/widget.difficulty/10>3 ? 'Máximo' : level}",
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -84,7 +100,7 @@ int level = 0;
                   ),
                 ),
                 // O Container é apenas para delimitar o campo de escrita do texto.
-                Container(
+                SizedBox(
                   width: 200,
                   // O TextOverflow.ellipsis coloca '...' se o texto tentar passar da delimitação do widget
                   child: Column(
@@ -113,9 +129,10 @@ int level = 0;
                       ),
                       onPressed: () {
                         setState(() {
-                          if (level < 100) {
+                          if (level/widget.difficulty/10 <= 3) {
                             level++;
                           }
+                            upgradeLevel();
                         });
                       },
                       child: Icon(Icons.add),
@@ -133,6 +150,7 @@ int level = 0;
                         setState(() {
                           if (level > 0) {
                             level--;
+                            upgradeLevel();
                           }
                         });
                       },

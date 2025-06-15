@@ -33,8 +33,8 @@ class _InitialScreenState extends State<InitialScreen> {
         opacity: isVisible ? 1 : 0,
         child: ListView(
           children: [
-            Task('Primeiro teste', Colors.white, picture1, 3),
-            Task('Segundo teste', Colors.white, picture2, 4),
+            Task('Primeiro teste', Colors.white, picture1, 2),
+            Task('Segundo teste', Colors.white, picture2, 0),
             Task('Terceiro  teste', Colors.deepPurple, picture3, 1),
           ],
         ),
