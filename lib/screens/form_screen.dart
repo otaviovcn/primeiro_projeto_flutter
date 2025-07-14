@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:nosso_primeiro_projeto/data/task_inherited.dart';
 
 class FormScreen extends StatefulWidget {
-  const FormScreen({super.key});
+  const FormScreen({super.key, required this.taskContext});
+
+  final BuildContext taskContext;
 
   @override
   State<FormScreen> createState() => _FormScreenState();
@@ -12,8 +15,22 @@ class _FormScreenState extends State<FormScreen> {
   TextEditingController difficultyController = TextEditingController();
   TextEditingController imageController = TextEditingController();
 
-
   final _formKey = GlobalKey<FormState>();
+
+  bool valueValidator(String? value) {
+    if (value != null && value.isEmpty) {
+      return true;
+    }
+    return false;
+  }
+
+  bool difficultyValidator(int value) {
+    if (value <= 0 || value > 5) {
+      return true;
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -41,7 +58,6 @@ class _FormScreenState extends State<FormScreen> {
                 ],
               ),
               child: Column(
-      
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -49,7 +65,7 @@ class _FormScreenState extends State<FormScreen> {
                     padding: const EdgeInsets.all(8.0),
                     child: TextFormField(
                       validator: (validate) {
-                        if(validate!=null && validate.isEmpty) {
+                        if (valueValidator(validate)) {
                           return "O campo tarefa não pode estar vazio";
                         }
                         return null;
@@ -67,12 +83,16 @@ class _FormScreenState extends State<FormScreen> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextFormField(
-                      validator: (validate) {
-                        if(validate!.isEmpty) {
+                      validator: (value) {
+                        if (valueValidator(value)) {
+                          if (difficultyValidator(int.parse(value!))) {
+                            return "A dificuldade deve estar entre '1' e '5'";
+                          }
                           return "O campo dificuldade não pode estar vazio";
-                        } else if ( int.parse(validate) <= 0  || int.parse(validate) > 5) {
-                          return "A dificuldade deve estar entre '1' e '5'";
                         }
+                        // else if ( value!= null && difficultyValidator(int.parse(value))) {
+                        //   return "A dificuldade deve estar entre '1' e '5'";
+                        // }
                         return null;
                       },
                       keyboardType: TextInputType.number,
@@ -89,14 +109,16 @@ class _FormScreenState extends State<FormScreen> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextFormField(
-                      validator: (validate) {
-                        if(validate!.isEmpty) {
+                      validator: (value) {
+                        if (valueValidator(value)) {
                           return "O campo url não pode estar vazio";
                         }
                         return null;
                       },
                       keyboardType: TextInputType.url,
-                      onChanged: (text) { setState(() {}); },
+                      onChanged: (text) {
+                        setState(() {});
+                      },
                       controller: imageController,
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
@@ -117,31 +139,73 @@ class _FormScreenState extends State<FormScreen> {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: Image.network(
-                          imageController.text,
-                          errorBuilder: (BuildContext context,  Object exception, StackTrace? stackTrace) {
-                            return Image.asset('assets/images/nophoto.png');
-                          },
-                          fit: BoxFit.cover,
-                      ),
+                      child:
+                          imageController.text.contains('http')
+                              ? Image.network(
+                                imageController.text,
+                                errorBuilder: (
+                                  BuildContext context,
+                                  Object exception,
+                                  StackTrace? stackTrace,
+                                ) {
+                                  return Image.asset(
+                                    'assets/images/nophoto.png',
+                                  );
+                                },
+                                fit: BoxFit.cover,
+                              )
+                              : Image.asset(
+                                imageController.text,
+                                errorBuilder: (
+                                  BuildContext context,
+                                  Object exception,
+                                  StackTrace? stackTrace,
+                                ) {
+                                  return Image.asset(
+                                    'assets/images/nophoto.png',
+                                  );
+                                },
+                              ),
                     ),
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      if(_formKey.currentState!.validate()) {
-                        print(
-                          "Nome: ${nameController
-                              .text} \nDificuldade: ${difficultyController
-                              .text}\nLink:  ${imageController.text}  ",
-                        );
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Formulário enviado com sucesso'),
-                          )
-                        );
-                      }
-                    },
-                    child: Text("Adicionar"),
+                  SizedBox(
+                    width: 120,
+                    height: 40,
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              10.0,
+                            ), // Define o raio de arredondamento
+                          ),
+                        ),
+                      ),
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          // print(
+                          //   "Nome: ${nameController
+                          //       .text} \nDificuldade: ${difficultyController
+                          //       .text}\nLink:  ${imageController.text}  ",
+                          // );
+
+                          TaskInherited.of(widget.taskContext).newTask(
+                            nameController.text,
+                            imageController.text,
+                            int.parse(difficultyController.text),
+                          );
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Formulário enviado com sucesso'),
+                            ),
+                          );
+
+                          Navigator.pop(context);
+                        }
+                      },
+                      child: Text("Adicionar"),
+                    ),
                   ),
                 ],
               ),

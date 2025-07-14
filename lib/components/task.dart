@@ -3,27 +3,33 @@ import 'package:flutter/material.dart';
 import 'difficulty.dart';
 
 class Task extends StatefulWidget {
-  final String name;
-  final Color color;
-  final String picture;
-  final int difficulty;
+  final String taskName;
+  final Color colorBackground;
+  final String photoUrl;
+  final int taskDifficulty;
 
-  const Task(this.name, this.color, this.picture, this.difficulty, {super.key});
+  Task({
+    super.key,
+    required this.taskName,
+    required this.photoUrl,
+    required this.taskDifficulty,
+    this.colorBackground = Colors.white,
+  });
+  int level = 0;
 
   @override
   State<Task> createState() => _TaskState();
 }
 
 class _TaskState extends State<Task> {
-  int level = 0;
   double progressIndicator = 0.0;
   Color color = Colors.lightBlue;
 
   void upgradeLevel() {
     double evolution =
-        widget.difficulty == 0 ? 1 : level / widget.difficulty / 10;
+        widget.taskDifficulty == 0 ? 1 : widget.level / widget.taskDifficulty / 10;
 
-    if ( evolution <= 1.0) {
+    if (evolution <= 1.0) {
       color = Colors.lightBlue;
       progressIndicator = evolution;
     } else if (evolution <= 2.0) {
@@ -61,7 +67,7 @@ class _TaskState extends State<Task> {
                   child: LinearProgressIndicator(value: progressIndicator),
                 ),
                 Text(
-                  "Nível ${level/widget.difficulty/10>3 ? 'Máximo' : level}",
+                  "Nível ${widget.level / widget.taskDifficulty / 10 > 3 ? 'Máximo' : widget.level}",
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -76,7 +82,7 @@ class _TaskState extends State<Task> {
                 topRight: Radius.circular(4),
                 topLeft: Radius.circular(4),
               ),
-              color: widget.color,
+              color: widget.colorBackground,
             ),
             height: 100,
             padding: const EdgeInsets.only(right: 8),
@@ -96,7 +102,10 @@ class _TaskState extends State<Task> {
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(4),
                     ),
-                    child: Image.network(widget.picture, fit: BoxFit.cover),
+                    child:
+                        widget.photoUrl.contains("http")
+                            ? Image.network(widget.photoUrl, fit: BoxFit.cover)
+                            : Image.asset(widget.photoUrl),
                   ),
                 ),
                 // O Container é apenas para delimitar o campo de escrita do texto.
@@ -107,12 +116,12 @@ class _TaskState extends State<Task> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        widget.name,
+                        widget.taskName,
                         style: TextStyle(fontSize: 24),
                         overflow: TextOverflow.ellipsis,
                       ),
 
-                      Difficulty(difficultyLevel: widget.difficulty),
+                      Difficulty(difficultyLevel: widget.taskDifficulty),
                     ],
                   ),
                 ),
@@ -129,10 +138,10 @@ class _TaskState extends State<Task> {
                       ),
                       onPressed: () {
                         setState(() {
-                          if (level/widget.difficulty/10 <= 3) {
-                            level++;
+                          if (widget.level / widget.taskDifficulty / 10 <= 3) {
+                            widget.level++;
                           }
-                            upgradeLevel();
+                          upgradeLevel();
                         });
                       },
                       child: Icon(Icons.add),
@@ -148,8 +157,8 @@ class _TaskState extends State<Task> {
                       ),
                       onPressed: () {
                         setState(() {
-                          if (level > 0) {
-                            level--;
+                          if (widget.level > 0) {
+                            widget.level--;
                             upgradeLevel();
                           }
                         });
