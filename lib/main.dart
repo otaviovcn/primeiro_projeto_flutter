@@ -11,19 +11,14 @@ void main() {
 class MyApp extends StatelessWidget {
   MyApp({super.key});
 
-
-@override
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple ),
       ),
-      // home: const MyHomePage(title: 'Flutter Demo Home Page'),
       home: TaskInherited(child: const InitialScreen()),
     );
   }
 }
-
-
-

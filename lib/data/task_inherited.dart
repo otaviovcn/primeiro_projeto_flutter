@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nosso_primeiro_projeto/components/task.dart';
 
 class TaskInherited extends InheritedWidget {
-  TaskInherited({super.key, required Widget child}) : super(child: child);
+  TaskInherited({super.key, required super.child});
 
   final String picture1 =
       "https://img-new.cgtrader.com/items/3579119/b0c7a67e96/large/flutter-dash-3d-model-b0c7a67e96.jpg";
