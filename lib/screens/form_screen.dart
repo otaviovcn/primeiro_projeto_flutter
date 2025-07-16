@@ -17,18 +17,39 @@ class _FormScreenState extends State<FormScreen> {
 
   final _formKey = GlobalKey<FormState>();
 
-  bool valueValidator(String? value) {
-    if (value != null && value.isEmpty) {
-      return true;
+  Map<String, String?> valueValidator({
+    required String? value,
+    required String nameField,
+  }) {
+    Map<String, String?> response = {"isItValid": "", "response": ""};
+    if (value == null) {
+      response["response"] =
+          "O campo '$nameField' não pode receber uma informação nula";
+    } else if (value.isEmpty) {
+      response["response"] = "O campo '$nameField' não pode estar vazio";
+    } else {
+      response["isItValid"] = null;
     }
-    return false;
+    return response;
   }
 
-  bool difficultyValidator(int value) {
-    if (value <= 0 || value > 5) {
-      return true;
+  Map<String, String?> difficultyValidator({required String value}) {
+    Map<String, String?> response = {"isItValid": "", "response": ""};
+
+    try {
+      int intValue = int.parse(value);
+      if (intValue <= 0 || intValue > 5) {
+        response["response"] =
+            "O grau de dificuldade deve estar entre '1' e '5'";
+        return response;
+      }
+    } catch (e) {
+      response["response"] =
+          "O campo deve ser preenchido com um caractere numérico";
+      return response;
     }
-    return false;
+    response["isItValid"] = null;
+    return response;
   }
 
   @override
@@ -64,9 +85,13 @@ class _FormScreenState extends State<FormScreen> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextFormField(
-                      validator: (validate) {
-                        if (valueValidator(validate)) {
-                          return "O campo tarefa não pode estar vazio";
+                      validator: (value) {
+                        var resultValueValidator = valueValidator(
+                          value: value,
+                          nameField: "Tarefa",
+                        );
+                        if (resultValueValidator["isItValid"] != null) {
+                          return resultValueValidator["response"];
                         }
                         return null;
                       },
@@ -84,15 +109,20 @@ class _FormScreenState extends State<FormScreen> {
                     padding: const EdgeInsets.all(8.0),
                     child: TextFormField(
                       validator: (value) {
-                        if (valueValidator(value)) {
-                          if (difficultyValidator(int.parse(value!))) {
-                            return "A dificuldade deve estar entre '1' e '5'";
-                          }
-                          return "O campo dificuldade não pode estar vazio";
+                        var resultValueValidator = valueValidator(
+                          value: value,
+                          nameField: "Grau de dificuldade",
+                        );
+                        var resultDifficultyValidator = difficultyValidator(
+                          value: value!,
+                        );
+
+                        if (resultValueValidator["isItValid"] != null) {
+                          return resultValueValidator["response"];
+                        } else if (resultDifficultyValidator["isItValid"] !=
+                            null) {
+                          return resultDifficultyValidator["response"];
                         }
-                        // else if ( value!= null && difficultyValidator(int.parse(value))) {
-                        //   return "A dificuldade deve estar entre '1' e '5'";
-                        // }
                         return null;
                       },
                       keyboardType: TextInputType.number,
@@ -110,8 +140,12 @@ class _FormScreenState extends State<FormScreen> {
                     padding: const EdgeInsets.all(8.0),
                     child: TextFormField(
                       validator: (value) {
-                        if (valueValidator(value)) {
-                          return "O campo url não pode estar vazio";
+                        var resultValueValidator = valueValidator(
+                          value: value,
+                          nameField: "Link da imagem",
+                        );
+                        if (resultValueValidator["isItValid"] != null) {
+                          return resultValueValidator["response"];
                         }
                         return null;
                       },
