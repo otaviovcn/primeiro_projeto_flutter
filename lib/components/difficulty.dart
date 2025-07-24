@@ -6,11 +6,7 @@ class Difficulty extends StatelessWidget {
   const Difficulty({
     super.key,
     required this.difficultyLevel,
-    // Aqui seria para passar o objeto Task via parâmetro, e assim fossem usados os seus recursos internos(variáveis, métodos... );
-    // required this.widget,
   });
-
-  // final Task widget;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +17,6 @@ class Difficulty extends StatelessWidget {
           size: 15,
           color:
           difficultyLevel >= 1
-          // widget.difficulty >= 1
               ? Colors.blue
               : Colors.blue[100],
         ),

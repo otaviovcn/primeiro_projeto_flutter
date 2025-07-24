@@ -211,24 +211,17 @@ class _FormScreenState extends State<FormScreen> {
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
                               10.0,
-                            ), // Define o raio de arredondamento
+                            ),
                           ),
                         ),
                       ),
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          // print(
-                          //   "Nome: ${nameController
-                          //       .text} \nDificuldade: ${difficultyController
-                          //       .text}\nLink:  ${imageController.text}  ",
-                          // );
-
                           TaskInherited.of(widget.taskContext).newTask(
                             nameController.text,
                             imageController.text,
                             int.parse(difficultyController.text),
                           );
-
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text('Formulário enviado com sucesso'),
