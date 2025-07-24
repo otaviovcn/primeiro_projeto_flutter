@@ -75,5 +75,8 @@ class TaskDao {
     return toList(result);
   }
 
-  // delete(String taskName) async {}
+  delete(String taskName) async {
+    final Database db = await getDatabase();
+    return db.delete(_tableName, where: '$_name = ?',whereArgs: [taskName]);
+  }
 }
