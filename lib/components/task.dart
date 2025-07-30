@@ -15,6 +15,7 @@ class Task extends StatefulWidget {
     required this.taskDifficulty,
     this.colorBackground = Colors.white,
   });
+
   int level = 0;
 
   @override
@@ -27,7 +28,9 @@ class _TaskState extends State<Task> {
 
   void upgradeLevel() {
     double evolution =
-        widget.taskDifficulty == 0 ? 1 : widget.level / widget.taskDifficulty / 10;
+        widget.taskDifficulty == 0
+            ? 1
+            : widget.level / widget.taskDifficulty / 10;
 
     if (evolution <= 1.0) {
       color = Colors.lightBlue;
@@ -102,10 +105,37 @@ class _TaskState extends State<Task> {
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(4),
                     ),
+                    // errorBuilder: (
+                    // BuildContext context,
+                    // Object exception,
+                    // StackTrace? stackTrace,
+                    // ) {
+                    // return Image.asset(
+                    // 'assets/images/nophoto.png',
+                    // );
                     child:
                         widget.photoUrl.contains("http")
-                            ? Image.network(widget.photoUrl, fit: BoxFit.cover)
-                            : Image.asset(widget.photoUrl),
+                            ? Image.network(
+                              widget.photoUrl,
+                              fit: BoxFit.cover,
+                              errorBuilder: (
+                                BuildContext context,
+                                Object exception,
+                                StackTrace? stackTrace,
+                              ) {
+                                return Image.asset('assets/images/nophoto.png');
+                              },
+                            )
+                            : Image.asset(
+                              widget.photoUrl,
+                              errorBuilder: (
+                                BuildContext context,
+                                Object exception,
+                                StackTrace? stackTrace,
+                              ) {
+                                return Image.asset('assets/images/nophoto.png');
+                              },
+                            ),
                   ),
                 ),
                 // O Container é apenas para delimitar o campo de escrita do texto.
