@@ -21,6 +21,7 @@ class _InitialScreenState extends State<InitialScreen> {
         leading: Container(),
         backgroundColor: Colors.blue,
         title: Text('Tarefas', style: TextStyle(color: Colors.white)),
+        elevation: 20.0,
       ),
       body: FutureBuilder<List<Task>>(
           future: TaskDao().findAll(),
