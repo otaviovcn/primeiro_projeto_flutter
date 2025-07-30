@@ -8,12 +8,14 @@ class TaskDao {
       'CREATE TABLE $_tableName('
       '$_name TEXT, '
       '$_difficulty INTEGER, '
-      '$_photo TEXT)';
+      '$_photo TEXT,'
+      '$_level INTEGER)';
 
   static const _tableName = 'task_table';
   static const _name = 'name';
   static const _difficulty = 'difficulty';
   static const _photo = 'photo';
+  static const _level = 'level';
 
   // * Métodos auxiliares *
   List<Task> toList(List<Map<String, dynamic>> taskMap) {
@@ -23,6 +25,7 @@ class TaskDao {
         taskName: row[_name],
         taskDifficulty: row[_difficulty],
         photoUrl: row[_photo],
+        level: row[_level],
       );
       tasks.add(task);
     }
@@ -35,7 +38,20 @@ class TaskDao {
     taskMap[_name] = task.taskName;
     taskMap[_difficulty] = task.taskDifficulty;
     taskMap[_photo] = task.photoUrl;
+    taskMap[_level] = task.level;
     return taskMap;
+  }
+
+  update(Task task) async {
+    print(" Método update ");
+    final Database db = await getDatabase();
+    var  taskMap = toMap(task);
+    return await db.update(
+      _tableName,
+      taskMap,
+      where: '$_name = ?',
+      whereArgs: [task.taskName],
+    );
   }
 
   save(Task task) async {
@@ -58,10 +74,8 @@ class TaskDao {
   }
 
   Future<List<Task>> findAll() async {
-    print('Acessando o findAll...');
     final Database db = await getDatabase();
     final List<Map<String, dynamic>> result = await db.query(_tableName);
-    print('Procurando dados no db... \nencontrado!');
     return toList(result);
   }
 

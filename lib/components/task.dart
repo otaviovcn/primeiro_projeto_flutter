@@ -8,16 +8,16 @@ class Task extends StatefulWidget {
   final Color colorBackground;
   final String photoUrl;
   final int taskDifficulty;
+  int level;
 
   Task({
     super.key,
     required this.taskName,
     required this.photoUrl,
     required this.taskDifficulty,
+    this.level = 0,
     this.colorBackground = Colors.white,
   });
-
-  int level = 0;
 
   @override
   State<Task> createState() => _TaskState();
@@ -27,7 +27,7 @@ class _TaskState extends State<Task> {
   double progressIndicator = 0.0;
   Color color = Colors.lightBlue;
 
-  void upgradeLevel() {
+  void actualLevel() {
     double evolution =
         widget.taskDifficulty == 0
             ? 1
@@ -50,6 +50,9 @@ class _TaskState extends State<Task> {
 
   @override
   Widget build(BuildContext context) {
+    // para conferir o nível atual;
+    actualLevel();
+
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Stack(
@@ -180,7 +183,15 @@ class _TaskState extends State<Task> {
                                         3) {
                                       widget.level++;
                                     }
-                                    upgradeLevel();
+                                    var newTask = Task(
+                                      taskName: widget.taskName,
+                                      photoUrl: widget.photoUrl,
+                                      taskDifficulty: widget.taskDifficulty,
+                                      level: widget.level,
+                                    );
+
+                                    actualLevel();
+                                    TaskDao().update(newTask );
                                   });
                                 },
                                 child: Icon(Icons.keyboard_arrow_up),
@@ -203,7 +214,16 @@ class _TaskState extends State<Task> {
                                   setState(() {
                                     if (widget.level > 0) {
                                       widget.level--;
-                                      upgradeLevel();
+
+                                      var newTask = Task(
+                                        taskName: widget.taskName,
+                                        photoUrl: widget.photoUrl,
+                                        taskDifficulty: widget.taskDifficulty,
+                                        level: widget.level,
+                                      );
+
+                                      actualLevel();
+                                      TaskDao().update(newTask );
                                     }
                                   });
                                 },
@@ -214,7 +234,7 @@ class _TaskState extends State<Task> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(top: 4, ),
+                        padding: const EdgeInsets.only(top: 4),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
