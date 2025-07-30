@@ -51,15 +51,14 @@ class _InitialScreenState extends State<InitialScreen> {
             }
           }),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
+        onPressed:  () async {
+          await Navigator.push(
             context,
             MaterialPageRoute(
               builder: (newContext) => FormScreen(taskContext: context),
             ),
-          ).then((value) =>
-              setState(() {})
           );
+          setState(() {});
         },
         child: Icon(Icons.add),
       ),

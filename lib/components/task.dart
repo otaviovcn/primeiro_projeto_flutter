@@ -105,14 +105,6 @@ class _TaskState extends State<Task> {
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(4),
                     ),
-                    // errorBuilder: (
-                    // BuildContext context,
-                    // Object exception,
-                    // StackTrace? stackTrace,
-                    // ) {
-                    // return Image.asset(
-                    // 'assets/images/nophoto.png',
-                    // );
                     child:
                         widget.photoUrl.contains("http")
                             ? Image.network(
