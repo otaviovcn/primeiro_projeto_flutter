@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nosso_primeiro_projeto/data/task_inherited.dart';
+import 'package:nosso_primeiro_projeto/components/task.dart';
+import 'package:nosso_primeiro_projeto/data/task_dao.dart';
 
 class FormScreen extends StatefulWidget {
   const FormScreen({super.key, required this.taskContext});
@@ -209,18 +210,20 @@ class _FormScreenState extends State<FormScreen> {
                       style: ButtonStyle(
                         shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              10.0,
-                            ),
+                            borderRadius: BorderRadius.circular(10.0),
                           ),
                         ),
                       ),
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          TaskInherited.of(widget.taskContext).newTask(
-                            nameController.text,
-                            imageController.text,
-                            int.parse(difficultyController.text),
+                          TaskDao().save(
+                            Task(
+                              taskName: nameController.text,
+                              photoUrl: imageController.text,
+                              taskDifficulty: int.parse(
+                                difficultyController.text,
+                              ),
+                            ),
                           );
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(

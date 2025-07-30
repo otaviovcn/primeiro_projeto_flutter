@@ -7,7 +7,7 @@ class TaskDao {
   static const String tableSQL =
       'CREATE TABLE $_tableName('
       '$_name TEXT, '
-      '$_difficulty INTEGER '
+      '$_difficulty INTEGER, '
       '$_photo TEXT)';
 
   static const _tableName = 'task_table';
@@ -41,8 +41,9 @@ class TaskDao {
   save(Task task) async {
     print(" Método save ");
     final Database db = await getDatabase();
-    final  taskMap = toMap(task);
+    var  taskMap = toMap(task);
     var itemList = await find(task.taskName);
+    print('Resultado de find("${task.taskName}"): $itemList');
     if (itemList.isEmpty) {
       print(" A tarefa não existia  ");
       return await db.insert(_tableName, taskMap);

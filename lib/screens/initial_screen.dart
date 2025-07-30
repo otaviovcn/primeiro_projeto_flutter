@@ -23,33 +23,33 @@ class _InitialScreenState extends State<InitialScreen> {
         title: Text('Tarefas', style: TextStyle(color: Colors.white)),
       ),
       body: FutureBuilder<List<Task>>(
-        future: TaskDao().findAll(),
-        builder: (context, snapshot) {
-          List<Task>? items = snapshot.data;
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-              return Loading();
-            case ConnectionState.waiting:
-              return Loading();
-            case ConnectionState.active:
-              return Loading();
-            case ConnectionState.done:
-              if (snapshot.hasData && items != null) {
-                if (items.isNotEmpty) {
-                  return ListView.builder(
-                    itemCount: items.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final task = items[index];
-                      return task;
-                    },
-                  );
-                } else {
-                  return EmptyList();
+          future: TaskDao().findAll(),
+          builder: (context, snapshot) {
+            List<Task>? items = snapshot.data;
+            switch (snapshot.connectionState) {
+              case ConnectionState.none:
+                return Loading();
+              case ConnectionState.waiting:
+                return Loading();
+              case ConnectionState.active:
+                return Loading();
+              case ConnectionState.done:
+                if (snapshot.hasData && items != null) {
+                  if (items.isNotEmpty) {
+                    return ListView.builder(
+                      itemCount: items.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final task = items[index];
+                        return task;
+                      },
+                    );
+                  } else {
+                    return EmptyList();
+                  }
                 }
-              }
-            return Text('Erro ao carregar tarefas.');
-          }
-        }),
+                return Text('Erro ao carregar tarefas.');
+            }
+          }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
@@ -57,6 +57,8 @@ class _InitialScreenState extends State<InitialScreen> {
             MaterialPageRoute(
               builder: (newContext) => FormScreen(taskContext: context),
             ),
+          ).then((value) =>
+              setState(() {})
           );
         },
         child: Icon(Icons.add),
