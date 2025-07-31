@@ -271,9 +271,36 @@ class _TaskState extends State<Task> {
                                   elevation: 2,
                                 ),
                                 onPressed: () {
-                                  setState(() {
-                                    TaskDao().delete(widget.taskName);
-                                  });
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Text('Confirmar exclusão'),
+                                        content: Text('Tem certeza de que deseja excluir DEFINITIVAMENTE a tarefa "${widget.taskName}"?'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text('Cancelar'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () async {
+                                              await TaskDao().delete(widget.taskName);
+                                              Navigator.of(context).pop();
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(content: Text('Tarefa excluída com sucesso!')),
+                                              );
+                                            },
+                                            child: Text(
+                                              'Excluir',
+                                              style: TextStyle(color: Colors.red),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
                                 },
                                 child: Icon(Icons.delete),
                               ),
