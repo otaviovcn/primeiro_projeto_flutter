@@ -1,15 +1,25 @@
 import 'package:sqflite/sqflite.dart';
+import 'dart:async';
 
 import '../components/task.dart';
 import 'database.dart';
 
 class TaskDao {
+  static final TaskDao _instance = TaskDao._internal();
+
+  factory TaskDao() => _instance;
+
+  TaskDao._internal();
+
+  final StreamController<List<Task>> _taskStreamController =
+      StreamController.broadcast();
+
   static const String tableSQL =
-      'CREATE TABLE $_tableName('
-      '$_name TEXT, '
-      '$_difficulty INTEGER, '
-      '$_photo TEXT,'
-      '$_level INTEGER)';
+      '''CREATE TABLE $_tableName(
+      $_name TEXT, 
+      $_difficulty INTEGER, 
+      $_photo TEXT,
+      $_level INTEGER)''';
 
   static const _tableName = 'task_table';
   static const _name = 'name';
@@ -42,16 +52,33 @@ class TaskDao {
     return taskMap;
   }
 
+  Future<void> _refreshTasks() async {
+    final db = await getDatabase();
+    final List<Map<String, dynamic>> result = await db.query(_tableName);
+    final List<Task> tasks = toList(result);
+    _taskStreamController.add(tasks); // envia os dados pro stream
+  }
+
+  Stream<List<Task>> watchAll() {
+    _refreshTasks(); // força a primeira emissão
+    return _taskStreamController.stream;
+  }
+
+  void dispose() {
+    _taskStreamController.close();
+  }
+
   update(Task task) async {
     print(" Método update ");
     final Database db = await getDatabase();
     var  taskMap = toMap(task);
-    return await db.update(
+    await db.update(
       _tableName,
       taskMap,
       where: '$_name = ?',
       whereArgs: [task.taskName],
     );
+    _refreshTasks();
   }
 
   save(Task task) async {
@@ -62,15 +89,16 @@ class TaskDao {
     print('Resultado de find("${task.taskName}"): $itemList');
     if (itemList.isEmpty) {
       print(" A tarefa não existia  ");
-      return await db.insert(_tableName, taskMap);
+      await db.insert(_tableName, taskMap);
     } else {
-      return await db.update(
+      await db.update(
         _tableName,
         taskMap,
         where: '$_name = ?',
         whereArgs: [task.taskName],
       );
     }
+    _refreshTasks();
   }
 
   Future<List<Task>> findAll() async {
@@ -92,6 +120,8 @@ class TaskDao {
 
   delete(String taskName) async {
     final Database db = await getDatabase();
-    return db.delete(_tableName, where: '$_name = ?',whereArgs: [taskName]);
+     await db.delete(_tableName, where: '$_name = ?',whereArgs: [taskName]);
+    _refreshTasks();
   }
+
 }
